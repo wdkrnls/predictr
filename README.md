@@ -1,2 +1,2 @@
-# predictr
-Make predictions given a fitted model
+# profilr
+Profile predictions given a fitted model

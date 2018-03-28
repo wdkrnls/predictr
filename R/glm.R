@@ -71,7 +71,7 @@ build_mesh.glm <- function(fit, x = cidx[1],
   if(is.character(x)) {
     x <- which(names(mdl) == x)
   }
-  
+
   rs <- lapply(seq_along(mdl), function(i) {
     nm[i]
     col <- mdl[,i,drop=TRUE]
