@@ -23,7 +23,7 @@ inverse_link <- function(x) {
 }
 
 
-#' Make confidence intervals data frame for GAMs.
+#' Make data frame with confidence intervals on means for GAM objects.
 #' @param fit Object.
 #' @param newdata Data Frame.
 #' @param alpha Numeric Scalar.
@@ -41,4 +41,57 @@ make_confidence_intervals.glm <- function(fit,
   upr  <- trans(pred$fit + z*pred$se.fit)
   res <- data.frame(.lower = lwr, .estimate  = best, .upper = upr)
   cbind(newdata, res)
+}
+
+
+#' Build mesh around glm fitted object.
+#' @param fit Object.
+#' @param x Character column name or column integer position.
+#' @param n Integer Scalar mesh points.
+#' @param .max_rows Integer Scalar maximum allowed rows in mesh.
+build_mesh.glm <- function(fit, x = cidx[1],
+                           statistic = mean,
+                           n = 1000,
+                           step_size = 1L,
+                           .max_rows = 1e6) {
+  mdl <- fit$model[,-1,drop=FALSE]
+  cidx <- which(names(mdl) %in% names(Filter(is.numeric, mdl)))
+  stopifnot(length(cidx) > 0)
+  if(is.character(x)) {
+    x <- which(names(mdl) == x)
+    stopifnot(length(x) == 1)
+  }
+  rs <- lapply(seq_along(mdl), function(i) {
+    col <- mdl[,i]
+    cls <- class(col)
+    if(cls == "numeric") {
+      if(i == x) {
+        r <- range(col)
+        return(from = seq(min(r), to = max(r), length.out = n))
+      } else {
+        return(statistic(col))
+      }
+    }
+    if(cls == "integer") {
+      if(i == x) {
+        r <- range(col)
+        return(seq.int(from = min(r), to = max(r), by = step_size))
+      } else {
+        return(quantile(col, probs = 0.5, type = 3, names = FALSE))
+      }
+    }
+    if(cls == "factor") {
+      if(i == x) stop("x must be numeric or integer!")
+      lvl <- levels(col)
+      return(factor(lvl, lvl))
+    }
+    stop("class not implemented!", cls, "\n")
+  })
+
+  names(rs) <- names(mdl)
+  nr <- prod(unlist(lapply(rs, length)))
+  if(nr > .max_rows) {
+    stop("Too fine a mesh!", n)
+  }
+  expand.grid(rs)
 }
