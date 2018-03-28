@@ -18,9 +18,8 @@ make_prediction_intervals <- function(fit, newdata, alpha, ...) {
 }
 
 
-#' Build prediction mesh around fitted object.
-#' @param fit Model Object.
+#' Build a subset data frame with columns needed for prediction.
 #' @export
-build_mesh <- function(fit, ...) {
-  UseMethod("build_mesh")
+pred_columns <- function(fit, ...) {
+  UseMethod("pred_columns")
 }
