@@ -13,7 +13,7 @@ build_mesh <- function(fit, x = cidx[1],
                        n = 1000,
                        step_size = 1L,
                        .max_rows = 1e6) {
-  mdl <- pred_columns(fit)
+  mdl <- prediction_frame(fit)
   nm <- names(mdl)
   nm_numeric <- names(Filter(is.numeric, mdl))
   if(is.function(statistic)) {

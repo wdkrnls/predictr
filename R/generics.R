@@ -20,6 +20,6 @@ make_prediction_intervals <- function(fit, newdata, alpha, ...) {
 
 #' Build a subset data frame with columns needed for prediction.
 #' @export
-pred_columns <- function(fit, ...) {
+prediction_frame <- function(fit, ...) {
   UseMethod("pred_columns")
 }

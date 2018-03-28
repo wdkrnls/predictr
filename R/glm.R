@@ -47,7 +47,7 @@ make_confidence_intervals.glm <- function(fit,
 
 #' Data frame with all variables needed for prediction.
 #' @param fit Object.
-pred_columns.glm <- function(fit, untransform = TRUE) {
+prediction_frame.glm <- function(fit, untransform = TRUE) {
   pc <- fit$model[,-1,drop=FALSE]
   tf <- lapply(sapply(names(pc), trans_function), inverse_link)
   bt <- lapply(seq_along(pc), FUN = function(i) tf[[i]](pc[[i]]))

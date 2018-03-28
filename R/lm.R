@@ -1,1 +1,1 @@
-pred_columns.lm <- pred_columns.glm
+prediction_frame.lm <- prediction_frame.glm
