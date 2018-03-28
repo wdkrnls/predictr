@@ -16,6 +16,7 @@ inverse_link <- function(x) {
   switch(x,
          log = exp,
          logit = plogis,
+         probit = pnorm,
          sqrt = square,
          identity = identity,
          inverse = inverse,
