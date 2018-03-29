@@ -1,6 +1,6 @@
 fast_ci_plot <- function(data, x = nm[1], ..., ribbon_alpha = 0.3) {
   nm <- names(Filter(f = function(x) is.numeric(x) && length(x) > 1, data))
-  ggplot(data, mapping = aes_string(x, ".estimate", ...)) +
+  ggplot(data, mapping = aes_string(x, ".estimate", ...))
 }
 
 

@@ -1,0 +1,18 @@
+Package: profilr
+Version: 0.0.1
+Depends: R (>= 3.3.0)
+Imports: ggplot2, mgcv, utils
+Suggests: dplyr
+Date: 2018-03-28
+Title: Profile R Models
+Authors@R: c(person("Kyle", "Andrews", role=c("aut", "cre", "cph"),
+                                          email = "kyle.c.andrews@gmail.com"))
+Author: Kyle Andrews <kyle.c.andrews@gmail.com>
+Maintainer: Kyle Andrews <kyle.c.andrews@gmail.com>
+Description: Profile predictions given a fitted model.
+License: GPL (>= 3)
+LazyLoad: TRUE
+URL: https://github.com/wdkrnls/profilr
+BugReports: https://github.com/wdkrnls/profilr/issues
+RoxygenNote: 6.0.1
+
