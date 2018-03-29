@@ -49,6 +49,8 @@ make_confidence_intervals.glm <- function(fit,
 #' @param fit Object.
 prediction_frame.glm <- function(fit, untransform = TRUE) {
   pc <- fit$model[,-1,drop=FALSE]
+  wcol <- grepl(x = names(pc), pattern = "^\\(weights\\)$")
+  pc <- pc[,!wcol, drop=FALSE]
   tf <- lapply(sapply(names(pc), trans_function), inverse_link)
   bt <- lapply(seq_along(pc), FUN = function(i) tf[[i]](pc[[i]]))
   names(bt) <- trans_variable(names(pc))

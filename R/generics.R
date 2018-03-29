@@ -23,3 +23,12 @@ make_prediction_intervals <- function(fit, newdata, alpha, ...) {
 prediction_frame <- function(fit, ...) {
   UseMethod("pred_columns")
 }
+
+
+#' Update model with weights to account for heteroscedasticity.
+#' @param fit Model Object.
+#' @return Model Object.
+#' @export
+hetero <- function(fit, ...) {
+  UseMethod("hetero")
+}
