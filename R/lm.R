@@ -1,6 +1,7 @@
 #' Data frame with all variables needed for prediction.
 #' @param fit Object.
 #' @return Data Frame of prediction variables.
+#' @export
 prediction_frame.lm <- function(fit, untransform = TRUE) {
   pc <- fit$model[,-1,drop=FALSE] # drop response
   wcol <- grepl(x = names(pc), pattern = "^\\(weights\\)$")

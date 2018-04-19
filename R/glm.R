@@ -29,6 +29,7 @@ inverse_link <- function(x) {
 #' @param newdata Data Frame.
 #' @param alpha Numeric Scalar.
 #' @return Data Frame.
+#' @export
 make_confidence_intervals.glm <- function(fit,
                                           newdata = fit$model,
                                           alpha = 0.05) {
@@ -47,6 +48,7 @@ make_confidence_intervals.glm <- function(fit,
 
 #' Data frame with all variables needed for prediction.
 #' @param fit Object.
+#' @export
 prediction_frame.glm <- function(fit, untransform = TRUE) {
   pc <- fit$model[,-1,drop=FALSE]
   wcol <- grepl(x = names(pc), pattern = "^\\(weights\\)$")
