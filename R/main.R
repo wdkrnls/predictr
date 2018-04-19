@@ -3,12 +3,14 @@
 #' @param fit Object.
 #' @param x Character column name or column integer position
 #'   corresponding to a numeric column.
+#' @param at List with levels to include for named columns.
 #' @param statistic Function or list of Functions for different named
 #'   numeric columns.
 #' @param n Integer Scalar mesh points.
 #' @param .max_rows Integer Scalar maximum allowed rows in mesh.
 #' @export
 build_mesh <- function(fit, x = cidx[1],
+                       at = NULL,
                        statistic = mean,
                        n = 1000,
                        step_size = 1L,
@@ -28,7 +30,6 @@ build_mesh <- function(fit, x = cidx[1],
   }
 
   rs <- lapply(seq_along(mdl), function(i) {
-    nm[i]
     col <- mdl[,i,drop=TRUE]
     cls <- class(col)
     if(cls == "numeric") {
@@ -36,6 +37,9 @@ build_mesh <- function(fit, x = cidx[1],
         r <- range(col)
         return(from = seq(min(r), to = max(r), length.out = n))
       } else {
+        if(nm[i] %in% names(at)) {
+          return(at[[nm[i]]])
+        }
         return(statistic[[nm[i]]](col))
       }
     }
@@ -44,6 +48,9 @@ build_mesh <- function(fit, x = cidx[1],
         r <- range(col)
         return(seq.int(from = min(r), to = max(r), by = step_size))
       } else {
+        if(nm[i] %in% names(at)) {
+          return(at[[nm[i]]])
+        }
         return(quantile(col, probs = 0.5, type = 3, names = FALSE))
       }
     }

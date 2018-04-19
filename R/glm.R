@@ -7,6 +7,9 @@ inverse <- function(x) 1/x
 
 
 #' Return the function corresponding to the inverse of the specified link function.
+#'
+#' TODO: family(fit)$linkinv get's you this.
+#' 
 #' @param x Function.
 #' @return Function.
 #' @export
