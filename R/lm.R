@@ -27,3 +27,22 @@ hetero.lm <- function(fit, knots = 15) {
   res  <- fitted(hvar)
   update(fit, weights = 1/res^2)
 }
+
+
+#' Make data frame with confidence intervals on means for LM objects.
+#' @param fit Object.
+#' @param newdata Data Frame.
+#' @param alpha Numeric Scalar.
+#' @return Data Frame.
+#' @export
+make_confidence_intervals.lm <- function(fit,
+                                         newdata = fit$model,
+                                         alpha = 0.05) {
+  stopifnot(alpha > 0, alpha < 1)
+  pred <- predict(fit, newdata,
+                  interval = "confidence",
+                  type = "response",
+                  level = 1 - alpha)
+  res  <- as.data.frame(pred)
+  cbind(newdata, res)
+}

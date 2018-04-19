@@ -2,6 +2,7 @@
 
 S3method(hetero,lm)
 S3method(make_confidence_intervals,glm)
+S3method(make_confidence_intervals,lm)
 S3method(prediction_frame,glm)
 S3method(prediction_frame,lm)
 export(at)

@@ -24,7 +24,7 @@ inverse_link <- function(x) {
 }
 
 
-#' Make data frame with confidence intervals on means for GAM objects.
+#' Make data frame with confidence intervals on means for GAM and GLM objects.
 #' @param fit Object.
 #' @param newdata Data Frame.
 #' @param alpha Numeric Scalar.
