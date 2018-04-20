@@ -32,3 +32,15 @@ prediction_frame <- function(fit, ...) {
 hetero <- function(fit, ...) {
   UseMethod("hetero")
 }
+
+
+#' Simulate new data from the fitted model objects.
+#'
+#' This is equivalent to the simulate methods provided for many fitted
+#' objects. The only difference is that we want to get predictions for
+#' new data sets.
+#' @param fit Model Object.
+#' @return Matrix of simulated data.
+realize <- function(fit, newdata, ...) {
+  UseMethod("realize")
+}

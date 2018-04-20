@@ -61,3 +61,91 @@ prediction_frame.glm <- function(fit, untransform = TRUE) {
   names(bt) <- trans_variable(names(pc))
   as.data.frame(bt)
 }
+
+
+#' Make data frame with prediction intervals for GLM objects.
+#'
+#' Predictions about uncertainty in actually realized data as opposed
+#' to mean.
+#'
+#' Unfortunately prediction intervals on GLM's are a more advanced
+#' topic. In the case of Gaussian, Gamma, and Poisson families, a
+#' prediction interval means something. For logistic regression, not
+#' so much.
+#'
+#' Simon Wood suggests that a reasonable approach to generating
+#' prediction intervals in these cases may be to use posterior
+#' simulation. So that's what's implemented here except for the case
+#' of Gaussian identity GLMs.
+#' @param fit Object.
+#' @param newdata Data Frame.
+#' @param alpha Numeric Scalar.
+#' @return Data Frame.
+#' @export
+make_prediction_intervals.glm <- function(fit,
+                                          newdata = fit$model,
+                                          alpha = 0.05,
+                                          nsim = 30000) {
+
+  stopifnot(alpha > 0, alpha < 1)
+  fm <- family(fit)
+  if(fm$family == "gaussian" && fm$link == "identity") {
+    s    <- sigma(fit)
+    pred <- predict(fit, newdata,
+                    se.fit = TRUE)
+    res  <- as.data.frame(pred)
+    z <- qnorm(1 - alpha/2)
+    ivl <- sqrt(se.fit^2 + s^2)
+    lwr  <- with(pred, fit - z*ivl)
+    best <- pred$fit
+    upr  <- with(pred, fit + z*ivl)
+    res <- data.frame(lwr, fit  = best, upr)
+    return(cbind(newdata, res))
+  } else {
+    sim <- realize(fit, newdata, nsim)
+    pis <- apply(sim, 1, function(x) quantile(x, probs = c(alpha/2, 1-alpha/2)))
+    ftd <- predict(fit, newdata, type = "response")
+    return(as.data.frame(cbind(fit = as.matrix(ftd), t(pis))))
+  }
+}
+
+
+#' Realize new values from a fitted GLM model.
+#' @param fit Model Object.
+#' @param newdata Data Frame of X predictors.
+#' @param nsim Integer Scalar number of posterior simulations.
+#' @return Matrix of realizations.
+#' @export
+realize.glm <- function(fit,
+                        newdata = fit$model,
+                        nsim = 30000) {
+  fm <- family(fit)
+  if(fm$family == "poisson" && fm$link == "log") {
+    wts <- fit$prior.weights
+    if (any(wts != 1)) {
+      warning("ignoring prior weights")
+    }
+    ftd <- predict(fit, newdata, type = "response")
+    sim <- rpois(nsim * length(ftd), ftd)
+    return(matrix(sim, ncol = nsim))
+  }
+  if(fm$family == "Gamma" && fm$link == "log") {
+    wts <- object$prior.weights
+    if (any(wts != 1)) {
+      message("using weights as shape parameters")
+    }
+    ftd <- predict(object, newdata, type = "response")
+    shape <- MASS::gamma.shape(object)$alpha * wts
+    sim <- rgamma(nsim * length(ftd), shape = shape, rate = shape/ftd)
+    return(matrix(sim, ncol = nsim))
+  }
+  if(fm$family == "gaussian" && fm$link == "identity") {
+    vars <- deviance(fit)/df.residual(fit)
+    if (!is.null(fit$weights)) {
+      vars <- vars/fit$weights
+    }
+    ftd <- predict(fit, newdata, type = "response")
+    return(replicate(nsim, ftd + rnorm(n = nrow(newdata), sd = sqrt(vars))))
+  }
+  stop("GLM family and link not implemented yet!")
+}

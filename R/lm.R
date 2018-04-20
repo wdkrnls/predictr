@@ -46,3 +46,25 @@ make_confidence_intervals.lm <- function(fit,
   res  <- as.data.frame(pred)
   cbind(newdata, res)
 }
+
+
+#' Make data frame with prediction intervals on means for LM objects.
+#'
+#' Predictions about uncertainty in actually realized data as opposed
+#' to mean.
+#' @param fit Object.
+#' @param newdata Data Frame.
+#' @param alpha Numeric Scalar.
+#' @return Data Frame.
+#' @export
+make_prediction_intervals.lm <- function(fit,
+                                         newdata = fit$model,
+                                         alpha = 0.05) {
+  stopifnot(alpha > 0, alpha < 1)
+  pred <- predict(fit, newdata,
+                  interval = "prediction",
+                  type = "response",
+                  level = 1 - alpha)
+  res  <- as.data.frame(pred)
+  cbind(newdata, res)
+}
