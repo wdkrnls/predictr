@@ -38,13 +38,13 @@ make_confidence_intervals.glm <- function(fit,
                                           alpha = 0.05) {
   stopifnot(alpha > 0, alpha < 1)
   link <- fit$family$link
-  trans <- inverse_link(link)
+  trans <- family(fit)$linkinv
   pred <- predict(fit, newdata, type = "link", se.fit = TRUE)
   z <- qnorm(1 - alpha/2)
   lwr  <- trans(pred$fit - z*pred$se.fit)
   best <- trans(pred$fit)
   upr  <- trans(pred$fit + z*pred$se.fit)
-  res <- data.frame(.lower = lwr, .estimate  = best, .upper = upr)
+  res <- data.frame(lwr, fit  = best, upr)
   cbind(newdata, res)
 }
 
@@ -89,9 +89,10 @@ make_prediction_intervals.glm <- function(fit,
 
   stopifnot(alpha > 0, alpha < 1)
   fm <- family(fit)
+  ms <- newdata
   if(fm$family == "gaussian" && fm$link == "identity") {
     s    <- sigma(fit)
-    pred <- predict(fit, newdata,
+    pred <- predict(fit, newdata = ms,
                     se.fit = TRUE)
     res  <- as.data.frame(pred)
     z <- qnorm(1 - alpha/2)
@@ -100,12 +101,20 @@ make_prediction_intervals.glm <- function(fit,
     best <- pred$fit
     upr  <- with(pred, fit + z*ivl)
     res <- data.frame(lwr, fit  = best, upr)
-    return(cbind(newdata, res))
+    return(cbind(ms, res))
   } else {
-    sim <- realize(fit, newdata, nsim)
+    ftd <- predict(fit, newdata = ms, type = "response")
+    if(fm$family == "Gamma" && fm$link == "log") {
+      shp <- MASS::gamma.shape(fit)$alpha
+      lwr <- qgamma(alpha/2,   shape = shp, rate = shp/ftd)
+      upr <- qgamma(1-alpha/2, shape = shp, rate = shp/ftd)
+      return(cbind(ms, data.frame(lwr, fit = ftd, upr)))
+    }
+    sim <- realize(fit, newdata = ms, nsim)
     pis <- apply(sim, 1, function(x) quantile(x, probs = c(alpha/2, 1-alpha/2)))
-    ftd <- predict(fit, newdata, type = "response")
-    return(as.data.frame(cbind(fit = as.matrix(ftd), t(pis))))
+    ivl <- as.data.frame(cbind(fit = as.matrix(ftd), t(pis)))
+    names(ivl) <- c("fit", "lwr", "upr")
+    return(cbind(ms, ivl))
   }
 }
 
@@ -130,12 +139,12 @@ realize.glm <- function(fit,
     return(matrix(sim, ncol = nsim))
   }
   if(fm$family == "Gamma" && fm$link == "log") {
-    wts <- object$prior.weights
+    wts <- fit$prior.weights
     if (any(wts != 1)) {
-      message("using weights as shape parameters")
+      stop("weighted glm regression not implemented yet!")
     }
-    ftd <- predict(object, newdata, type = "response")
-    shape <- MASS::gamma.shape(object)$alpha * wts
+    ftd <- predict(fit, newdata, type = "response")
+    shape <- MASS::gamma.shape(fit)$alpha
     sim <- rgamma(nsim * length(ftd), shape = shape, rate = shape/ftd)
     return(matrix(sim, ncol = nsim))
   }

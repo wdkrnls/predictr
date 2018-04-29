@@ -41,6 +41,7 @@ hetero <- function(fit, ...) {
 #' new data sets.
 #' @param fit Model Object.
 #' @return Matrix of simulated data.
+#' @export
 realize <- function(fit, newdata, ...) {
   UseMethod("realize")
 }

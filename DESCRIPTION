@@ -1,9 +1,9 @@
 Package: profilr
-Version: 0.0.4
+Version: 0.0.5
 Depends: R (>= 3.3.0)
 Imports: ggplot2, mgcv, utils
 Suggests: dplyr
-Date: 2018-03-28
+Date: 2018-04-29
 Title: Profile R Models
 Authors@R: c(person("Kyle", "Andrews", role=c("aut", "cre", "cph"),
                                           email = "kyle.c.andrews@gmail.com"))
