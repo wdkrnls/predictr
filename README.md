@@ -15,8 +15,11 @@ ggplot(data = ci, mapping = aes(x = mpg, y = fit)) +
   geom_point(data = mtcars, mapping = aes(y = hp)) +
   geom_line() +
   geom_ribbon(mapping = aes(ymin = lwr, ymax = upr),
-              alpha = 0.3)
+              alpha = 0.3) +
+  labs(title = "95% confidence intervals", y = "hp") -> p
 ```
+
+![](man/figures/README-confidence-intervals.png)<!-- -->
 
 Right now, this package works with basic fits from `lm`, `glm`, and
 `gam`. Our goal is to expand this list to support more models.
@@ -30,21 +33,31 @@ ms  <- build_mesh(fit, x = "mpg", at = list(wt = c(2, 3, 4)))
 ci  <- make_confidence_intervals(fit, newdata = ms)
 ggplot(data = ci, mapping = aes(x = mpg)) +
   geom_point(data = mtcars, mapping = aes(y = hp), show.legend = FALSE) +
-  geom_line(aes(y = fit, color = factor(wt))) +
+  geom_line(aes(y = fit, color = factor(wt)), show.legend = FALSE) +
   geom_ribbon(mapping = aes(ymin = lwr, ymax = upr, fill = factor(wt)),
-              alpha = 0.3)
+              alpha = 0.3) +
+  labs(title = "95% confidence intervals by wt",
+       fill = "wt", color = "wt")
 ```
+
+![](man/figures/README-confidence-intervals-by.png)<!-- -->
 
 These last examples show mean predictions. We can also make
 predictions on realizable values.
 
 ```r
-ms  <- build_mesh(fit)
-pi  <- make_prediction_intervals(fit, newdata = ms)
+msp  <- build_mesh(fit) # mesh for prediction intervals
+pi  <- make_prediction_intervals(fit, newdata = msp)
 ggplot(data = pi, mapping = aes(x = mpg, y = fit)) +
   geom_point(data = mtcars, mapping = aes(y = hp)) +
   geom_line() +
-  geom_ribbon(mapping = aes(ymin = lwr, ymax = upr),
-              alpha = 0.3)
+  geom_ribbon(mapping = aes(ymin = lwr, ymax = upr, fill = wt),
+              alpha = 0.3, show.legend = FALSE) +
+  labs(title = "95% prediction intervals", y = "hp")
 ```
+
+![](man/figures/README-prediction-intervals.png)<!-- -->
+
+
+
 
