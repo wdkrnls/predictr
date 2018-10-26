@@ -100,7 +100,7 @@ make_prediction_intervals.glm <- function(fit,
     lwr  <- with(pred, fit - z*ivl)
     best <- pred$fit
     upr  <- with(pred, fit + z*ivl)
-    res <- data.frame(lwr, fit  = best, upr)
+    res <- data.frame(.fit  = best, .lower = lwr, .upper = upr)
     return(cbind(ms, res))
   } else {
     ftd <- predict(fit, newdata = ms, type = "response")
