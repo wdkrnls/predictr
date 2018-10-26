@@ -1,18 +1,18 @@
-Package: profilr
-Version: 0.0.5
+Package: intreg
+Version: 0.0.1
 Depends: R (>= 3.3.0)
-Imports: ggplot2, mgcv, utils
-Suggests: dplyr
-Date: 2018-04-29
-Title: Profile R Models
+Imports: pracma, stats
+Date: 2018-05-09
+Title: Integral Regression
 Authors@R: c(person("Kyle", "Andrews", role=c("aut", "cre", "cph"),
                                           email = "kyle.c.andrews@gmail.com"))
 Author: Kyle Andrews <kyle.c.andrews@gmail.com>
 Maintainer: Kyle Andrews <kyle.c.andrews@gmail.com>
-Description: Profile predictions given a fitted model.
+Description: Fit nonlinear equations to data using using integral equations and linear regression.
 License: GPL (>= 3)
 LazyLoad: TRUE
-URL: https://github.com/wdkrnls/profilr
-BugReports: https://github.com/wdkrnls/profilr/issues
+URL: https://github.com/wdkrnls/intreg
+BugReports: https://github.com/wdkrnls/intreg/issues
 RoxygenNote: 6.0.1
-
+Suggests: 
+    testthat

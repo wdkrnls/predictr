@@ -42,3 +42,30 @@ at <- function(y) {
   stopifnot(length(y) == 1)
   function(x) y
 }
+
+
+#' Concatenate (collapse) string to a single line.
+#' @param x List(k).
+#' @return Character(1).
+concat <- function(x, sep = "") paste(x, collapse = sep)
+
+#' Recode values from a named lookup list.
+#' List -> List
+#' @param x Named List(k).
+#' @param lookup Named list lookup entries.
+#' @return Named List(k) that has been renamed.
+#' @examples
+#' concat(
+#'   recode(letters[1:3],
+#'          lookup = c(a = "b", b = "a", c = "z"))) # => "baz"
+recode <- function(x, lookup) {
+  if(is.null(names(lookup))) {
+    stop("Please pass a named atomic list as a lookup.")
+  }
+  idx <- which(x %in% names(lookup))
+  nm_look <- names(lookup)
+  for(i in idx) x[i] <- lookup[x[i]]
+  x
+}
+
+

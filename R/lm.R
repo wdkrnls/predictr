@@ -28,6 +28,7 @@ hetero.lm <- function(fit, knots = 15) {
   update(fit, weights = 1/res^2)
 }
 
+lm_rname = c("lwr" = ".lower", "upr" = ".upper", "fit" = ".fit")
 
 #' Make data frame with confidence intervals on means for LM objects.
 #' @param fit Object.
@@ -44,6 +45,7 @@ make_confidence_intervals.lm <- function(fit,
                   type = "response",
                   level = 1 - alpha)
   res  <- as.data.frame(pred)
+  names(res) <- recode(names(res), lookup = lm_rname)
   cbind(newdata, res)
 }
 
@@ -66,5 +68,6 @@ make_prediction_intervals.lm <- function(fit,
                   type = "response",
                   level = 1 - alpha)
   res  <- as.data.frame(pred)
+  names(res) <- recode(names(res), lookup = lm_rname)
   cbind(newdata, res)
 }

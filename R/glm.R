@@ -44,7 +44,7 @@ make_confidence_intervals.glm <- function(fit,
   lwr  <- trans(pred$fit - z*pred$se.fit)
   best <- trans(pred$fit)
   upr  <- trans(pred$fit + z*pred$se.fit)
-  res <- data.frame(lwr, fit  = best, upr)
+  res <- data.frame(.fit = best, .lower = lwr, .upper = upr)
   cbind(newdata, res)
 }
 
@@ -96,7 +96,7 @@ make_prediction_intervals.glm <- function(fit,
                     se.fit = TRUE)
     res  <- as.data.frame(pred)
     z <- qnorm(1 - alpha/2)
-    ivl <- sqrt(se.fit^2 + s^2)
+    ivl <- with(pred, sqrt(se.fit^2 + s^2))
     lwr  <- with(pred, fit - z*ivl)
     best <- pred$fit
     upr  <- with(pred, fit + z*ivl)
@@ -110,10 +110,13 @@ make_prediction_intervals.glm <- function(fit,
       upr <- qgamma(1-alpha/2, shape = shp, rate = shp/ftd)
       return(cbind(ms, data.frame(lwr, fit = ftd, upr)))
     }
+    if(fm$family == "binomial") {
+      stop("Binomial prediction intervals are not meaningful. Not implemented!")
+    }
     sim <- realize(fit, newdata = ms, nsim)
     pis <- apply(sim, 1, function(x) quantile(x, probs = c(alpha/2, 1-alpha/2)))
     ivl <- as.data.frame(cbind(fit = as.matrix(ftd), t(pis)))
-    names(ivl) <- c("fit", "lwr", "upr")
+    names(ivl) <- c(".fit", ".lower", ".upper")
     return(cbind(ms, ivl))
   }
 }
